@@ -1,3 +1,5 @@
+# A very basic Neural Network created from scratch
+
 # Clear environment
 rm(list = ls())
 
