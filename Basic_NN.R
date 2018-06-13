@@ -4,6 +4,7 @@ rm(list = ls())
 # Load libraries
 library(ggplot2)
 library(dplyr)
+library(tidyr)
 
 # input data to input neurons
 # 4x3 matrix
@@ -34,6 +35,7 @@ weightsMat = matrix(
 # create empty vectors for visualization purposes
 outputVec = c()
 weightsVec = c()
+errorVec = c()
 index = c()
 
 # iterate
@@ -46,6 +48,7 @@ for(i in 1:10000) {
   
   # calculate the error
   error = training_ouput - output
+  errorVec[i] = error
   
   # calculate the gradient (derivative of the activation function)
   sigmoidDeriv = output * (1 - output)
@@ -56,16 +59,16 @@ for(i in 1:10000) {
   weightsVec[i] = weightsMat
 }
 
-df = data.frame(index, outputVec, weightsVec)
+# create data frame to visualize metrics
+df = data.frame(index, outputVec, weightsVec, errorVec) %>%
+  gather("key", "value", -index)
 
+# visualize progression of 
 df %>%
-  ggplot(aes(x = index, y = outputVec)) + geom_point()
-
-df %>%
-  ggplot(aes(x = index, y = weightsVec)) + geom_point()
-  
-df %>%
-  ggplot(aes(x = outputVec, y = weightsVec)) + geom_point()
+  ggplot(aes(x = index, y = value)) +
+  geom_point() +
+  facet_grid(key~., scales = "free_y") +
+  theme_bw()
 
   
 
