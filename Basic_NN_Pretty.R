@@ -1,10 +1,13 @@
+# Create a Basic Neural Network in a functional way
+
+# Clear environment
 rm(list = ls())
 
-library(ggplot2)
+# Load Libraries
 library(dplyr)
 
+# Create the initial random weights matrix (3x1)
 initializeWeights = function() {
-  # create rarndom weights
   set.seed(0415)
   weights = round(runif(3, min = -1, max = 1), 2)
   weightsMat = matrix(
@@ -15,53 +18,62 @@ initializeWeights = function() {
   return(weightsMat)
 }
 
-
+# Activation Function (Sigmoid outputs probability between 0 and 1)
 sigmoid = function(x) {
   1/(1 + exp(-x))
 }
 
+# Gradient Function - Derivative of the activation function
 sigmoidDeriv = function(x) {
   x * (1 - x)
 }
 
+# Train function where the NN will iterate using backpropagation until 
+# the weights converge to a point where the error is minimized
 train = function(training_inputs, training_outputs, numIterations) {
   for(i in 1:numIterations) {
+    
+    # Get the outputs of the activation function on the inputs & weights
     output = think(training_inputs)
     
-    error = training_outputs - output
+    # Caclulate the squared error
+    error = (training_outputs - output)^2
     
+    # Calculate the Gradients of the outputs times the error
     preCalcAdjustment = output %>%
       sigmoidDeriv() * error
     
+    # Weight adjustment = T(inputs) dot (error * gradient)
     adjustment = t(training_inputs) %*% preCalcAdjustment 
     
+    # Adjust the weights
     weights = weights + adjustment
   }
+  
+  # Return the new weights
   return(weights)
 }
 
+# Run the sigmoid function over the dot product of inputs and weights
 think = function(inputs) {
   inputs %*% weights %>%
     sigmoid()
 }
 
-training_input = matrix(
+
+inputs = matrix(
   c(0,0,1,1,1,1,1,0,1,0,1,1),
   nrow = 4,
   ncol = 3)
 
-inputs = training_input
-
-training_ouput = t(matrix(
+outputs = t(matrix(
   c(0,1,1,0),
   nrow = 1,
   ncol = 4
 ))
 
-outputs = training_ouput
-
 weights = initializeWeights()
-weights = train(inputs, outputs, 100)
+weights = train(inputs, outputs, 50)
 
 test = matrix(
   c(1, 0, 1),

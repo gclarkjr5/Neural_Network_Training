@@ -49,7 +49,7 @@ for(i in 1:10000) {
   outputVec[i] = output # add to output vector
   
   # calculate the error
-  error = training_ouput - output
+  error = (training_ouput - output)^2
   errorVec[i] = error
   
   # calculate the gradient (derivative of the activation function)
